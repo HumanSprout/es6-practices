@@ -4,7 +4,13 @@
 
 // Exercise 3. Make sure the Character class cannot be instantiated
 
-let characters = {}, numNPC = 0, totalNPC = 3, time = 500 // 5000
+let PC, numNPC = 0, totalNPC = 3, time = 300, // 5000
+    rMove = {
+        1: "left",
+        2: "right",
+        3: "down",
+        4: "up"
+    }
 
 let randomize = (min, max) => {
     min = Math.ceil(min)
@@ -17,22 +23,17 @@ let rStart = () => [randomize(1,10), randomize(1,10)]
 let moveCharacter = (c) => {
     let direction = c.facing,
         position = c.position
-    console.log("position is ", typeof c.position)
     switch (direction) {
-        case 1:
-            direction = "left"
+        case "left":
             position[0] = position[0] - 1
             break;
-        case 2:
-            direction = "right"
+        case "right":
             position[0] = position[0] + 1
             break
-        case 3:
-            direction = "down"
+        case "down":
             position[1] = position[1] - 1
             break
-        case 4:
-            direction = "up"
+        case "up":
             position[1] = position[1] + 1
             break
         default:
@@ -65,18 +66,25 @@ let moveIsValid = (direction, position) => {
 
 class Character {
     constructor(start) {
+        let type = "PC"
+        if (this instanceof NonPlayerCharacter) type = "N" + type
+        this.type = type
         if (new.target === Character) {
             throw new Error('abstract class Character cannot be instantiated')
         }
         this.position = start
-        this.score = 0
-        console.log("character made at ", this.position)
+        console.log(this.type, " made at ", this.position)
+        this.windUp(this)
     }
     setPosition(position) {
         this.position = position
     }
-    setScore(score) {
-        this.score = score
+    move() {
+        moveCharacter(this)
+        console.log(this.type, " is at ", this.position)
+    }
+    windUp(c) {
+        setTimeout( function() { c.move() }, time )
     }
 }
 
@@ -84,6 +92,10 @@ class PlayerCharacter extends Character {
     constructor(start) {
         super(start)
         this.facing = "right"
+        this.score = 0
+    }
+    score() {
+        this.score += this.score
     }
     face(direction) { this.facing = direction }
     faceLeft() {
@@ -98,42 +110,33 @@ class PlayerCharacter extends Character {
     faceUp() {
         this.face("up")
     }
-    move() {
-        moveCharacter(this)
-        console.log(this.position)
-    }
 }
 
 class NonPlayerCharacter extends Character {
     constructor(start) {
         super(start)
-        this.live()
+        this.alive = true
         numNPC += 1
+        this.turn()
     }
-    move() {
-        moveCharacter(this)
+    turn() {
+        this.facing = rMove[randomize(1,4)]
     }
-    live() {
-        setTimeout( this.move, time)
+    kill() {
+        this.alive === false 
     }
 }
 
-let initPlayer = () => {
-    let player = new PlayerCharacter( rStart() )
-    return player
-}
+let initPlayer = () =>  new PlayerCharacter( rStart() )
 
 let initNPC = () => {
-    let player = new NonPlayerCharacter( rStart() )
-    return player
+    return new NonPlayerCharacter( rStart() )
 }
 
 (function(){
     let count = numNPC
-    characters.player = initPlayer()
+    PC = initPlayer()
     while (numNPC < totalNPC) {
         initNPC()
     }
 })()
-
-console.log(characters.player.position)
