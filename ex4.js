@@ -66,12 +66,12 @@ let moveIsValid = (direction, position) => {
 
 class Character {
     constructor(start) {
-        let type = "PC"
-        if (this instanceof NonPlayerCharacter) type = "N" + type
-        this.type = type
         if (new.target === Character) {
             throw new Error('abstract class Character cannot be instantiated')
         }
+        let type = "PC"
+        if (this instanceof NonPlayerCharacter) type = "N" + type
+        this.type = type
         this.position = start
         console.log(this.type, " made at ", this.position)
         this.windUp(this)
@@ -82,6 +82,7 @@ class Character {
     move() {
         moveCharacter(this)
         console.log(this.type, " is at ", this.position)
+        if (type === "NPC") this.turn()
     }
     windUp(c) {
         setTimeout( function() { c.move() }, time )
@@ -122,8 +123,12 @@ class NonPlayerCharacter extends Character {
     turn() {
         this.facing = rMove[randomize(1,4)]
     }
+    isSafe() {
+        if (this.position === PC.position) this.kill()
+    }
     kill() {
-        this.alive === false 
+        this.alive = false 
+        PC.score()
     }
 }
 
