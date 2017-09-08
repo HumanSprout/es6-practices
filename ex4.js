@@ -124,7 +124,12 @@ class NonPlayerCharacter extends Character {
         this.facing = rMove[randomize(1,4)]
     }
     isSafe() {
-        if (this.position === PC.position) this.kill()
+        if (this.position === PC.position) {
+            this.kill()
+            return false
+        } else {
+            return true
+        }
     }
     kill() {
         this.alive = false 
