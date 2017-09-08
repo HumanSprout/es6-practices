@@ -4,58 +4,46 @@
 
 // Exercise 3. Make sure the Character class cannot be instantiated
 
-let characters = {}, numNPC = 3
-
-characters.NPC = []
+let characters = {}, numNPC = 0, totalNPC = 3, time = 500 // 5000
 
 let randomize = (min, max) => {
     min = Math.ceil(min)
     max = Math.floor(max)
     return Math.floor(Math.random() * (max - min + 1 )) + min
 }
-    
+     
 let rStart = () => [randomize(1,10), randomize(1,10)]
 
-let moveCharacter = (i) => {
-    let direction,
-        rMove = randomize(1,4),
-        position,
-        newPosition
-
-    if (i = false) {
-        position = playerPosition()
-    } else {
-        position = characters[i].getPosition()
-    }
-
-    newPosition = position
-
-    switch (rMove) {
+let moveCharacter = (c) => {
+    let direction = c.facing,
+        position = c.position
+    console.log("position is ", typeof c.position)
+    switch (direction) {
         case 1:
             direction = "left"
-            newPosition[0] = position[0] - 1
+            position[0] = position[0] - 1
             break;
         case 2:
             direction = "right"
-            newPosition[0] = position[0] + 1
+            position[0] = position[0] + 1
             break
         case 3:
             direction = "down"
-            newPosition[1] = position[1] - 1
+            position[1] = position[1] - 1
             break
         case 4:
             direction = "up"
-            newPosition[1] = position[1] + 1
+            position[1] = position[1] + 1
             break
         default:
             new Error('invalid NPC move')
     }
-    if ( isMoveValid(direction, position) ) {
-        character[i].setPosition(newPosition)
+    if ( moveIsValid(direction, position) ) {
+        c.setPosition(position)
     }
 }
 
-let isMoveValid = (direction, position) => {
+let moveIsValid = (direction, position) => {
     let x = position[0], y = position[1]
     if (!position.includes(1) && !position.includes(10)) {
         return true
@@ -82,18 +70,13 @@ class Character {
         }
         this.position = start
         this.score = 0
+        console.log("character made at ", this.position)
     }
     setPosition(position) {
         this.position = position
     }
-    getPosition() {
-        return this.position
-    }
     setScore(score) {
-        this.score = numNPC - characters.NPC.length
-    }
-    getScore() {
-        return this.score
+        this.score = score
     }
 }
 
@@ -102,9 +85,7 @@ class PlayerCharacter extends Character {
         super(start)
         this.facing = "right"
     }
-    face(direction) {
-        this.facing = direction
-    }
+    face(direction) { this.facing = direction }
     faceLeft() {
         this.face("left")
     }
@@ -118,25 +99,27 @@ class PlayerCharacter extends Character {
         this.face("up")
     }
     move() {
-        moveCharacter(false)
+        moveCharacter(this)
+        console.log(this.position)
     }
 }
 
 class NonPlayerCharacter extends Character {
     constructor(start) {
         super(start)
-        this.index = characters.NPC.length + 1
-    }
-    getIndex() {
-        console.log(this.index)
+        this.live()
+        numNPC += 1
     }
     move() {
-        moveCharacter(this.index)
+        moveCharacter(this)
+    }
+    live() {
+        setTimeout( this.move, time)
     }
 }
 
 let initPlayer = () => {
-    let player = new PlayerCharacter(rStart())
+    let player = new PlayerCharacter( rStart() )
     return player
 }
 
@@ -148,34 +131,9 @@ let initNPC = () => {
 (function(){
     let count = numNPC
     characters.player = initPlayer()
-    while (count > 0) {
-        characters.NPC.push( initNPC() )
-        count -= 1
+    while (numNPC < totalNPC) {
+        initNPC()
     }
 })()
 
-let checkPosition =() => {
-    for (npc of characters.NPC ) {
-        if (npc.getPosition() === playerPosition()) {
-            characters.NPC.splice(npc.getPosition(), 1)
-        }
-    }
-}
-
-let moveCharacters = () => {
-    for (npc of characters.NPC) {
-        npc.move()
-    }
-    characters.player.move()
-    checkPosition()
-}
-
-let playerPosition = () => characters.player.getPosition()
-
-// while (characters.NPC.length > 0) {
-//     setTimeout()
-//         moveCharacters()
-// }
-
-
-console.log(playerPosition())
+console.log(characters.player.position)
