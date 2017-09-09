@@ -24,7 +24,6 @@ let moveIsValid = (dir, pos) => {
     let x = pos[0], y = pos[1]
     if( x < 1 || x > 10 || y < 1 || y > 10) {
         return false
-
     }
     return true
 }
@@ -122,7 +121,7 @@ class NonPlayerCharacter extends Character {
         }
     }
     kill() {
-        this.alive = false 
+        this.alive = false
         PC.score(this.id)
     }
     move(c) {
