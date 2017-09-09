@@ -4,7 +4,7 @@
 
 // Exercise 3. Make sure the Character class cannot be instantiated
 
-let PC, numNPC = 0, totalNPC = 3, time = 300, // 5000
+let PC, numNPC = 0, totalNPC = 10, time = 5000,
     rMove = {
         1: "left",
         2: "right",
@@ -20,48 +20,38 @@ let randomize = (min, max) => {
      
 let rStart = () => [randomize(1,10), randomize(1,10)]
 
+let moveIsValid = (dir, pos) => {
+    let x = pos[0], y = pos[1]
+    if( x < 1 || x > 10 || y < 1 || y > 10) {
+        return false
+
+    }
+    return true
+}
+
 let moveCharacter = (c) => {
-    let direction = c.facing,
-        position = c.position
-    switch (direction) {
+    let dir = c.facing,
+        pos = c.position,
+        newPos = pos.slice(0, 2)
+    switch (dir) {
         case "left":
-            position[0] = position[0] - 1
+            newPos[0] = pos[0] - 1
             break;
         case "right":
-            position[0] = position[0] + 1
+            newPos[0] = pos[0] + 1
             break
         case "down":
-            position[1] = position[1] - 1
+            newPos[1] = pos[1] - 1
             break
         case "up":
-            position[1] = position[1] + 1
+            newPos[1] = pos[1] + 1
             break
         default:
             new Error('invalid NPC move')
     }
-    if ( moveIsValid(direction, position) ) {
-        c.setPosition(position)
+    if ( moveIsValid(dir, newPos) ) {
+        c.setPosition(newPos)
     }
-}
-
-let moveIsValid = (direction, position) => {
-    let x = position[0], y = position[1]
-    if (!position.includes(1) && !position.includes(10)) {
-        return true
-    }
-    if (position === "left" && x === 1) {
-        return false
-    }
-    if (position === "right" && x === 10) {
-        return false
-    }
-    if (position === "down" && y === 1) {
-        return false
-    }
-    if (position === "up" && y === 10) {
-        return false
-    }
-    return true
 }
 
 class Character {
@@ -73,19 +63,18 @@ class Character {
         if (this instanceof NonPlayerCharacter) type = "N" + type
         this.type = type
         this.position = start
-        console.log(this.type, " made at ", this.position)
         this.windUp(this)
     }
-    setPosition(position) {
-        this.position = position
+    setPosition(newPos) {
+        this.position = newPos
     }
-    move() {
+    move(c) {
         moveCharacter(this)
         console.log(this.type, " is at ", this.position)
-        if (type === "NPC") this.turn()
+        if ( this.points < totalNPC ) this.windUp(c)
     }
     windUp(c) {
-        setTimeout( function() { c.move() }, time )
+        setTimeout( function() { c.move(c) }, time )
     }
 }
 
@@ -93,10 +82,12 @@ class PlayerCharacter extends Character {
     constructor(start) {
         super(start)
         this.facing = "right"
-        this.score = 0
+        this.points = 0
     }
-    score() {
-        this.score += this.score
+    score(id) {
+        this.points += 1
+        console.log("NPC ", id, " has been killed, the score is now ", this.points)
+        if ( this.points === totalNPC ) console.log("all of the NPCs have been eliminated!")
     }
     face(direction) { this.facing = direction }
     faceLeft() {
@@ -114,18 +105,17 @@ class PlayerCharacter extends Character {
 }
 
 class NonPlayerCharacter extends Character {
-    constructor(start) {
+    constructor(start, id) {
         super(start)
+        this.id = id
         this.alive = true
         numNPC += 1
-        this.turn()
     }
     turn() {
-        this.facing = rMove[randomize(1,4)]
+        this.facing = rMove[randomize(1, 4)]
     }
     isSafe() {
-        if (this.position === PC.position) {
-            this.kill()
+        if ( this.position === PC.position ) {
             return false
         } else {
             return true
@@ -133,14 +123,25 @@ class NonPlayerCharacter extends Character {
     }
     kill() {
         this.alive = false 
-        PC.score()
+        PC.score(this.id)
+    }
+    move(c) {
+        if ( this.alive && !this.isSafe() ) this.kill()
+        this.turn()
+        if ( this.alive && this.isSafe() ) {
+            moveCharacter(this)
+            console.log(this.type, " is at ", this.position)
+            this.windUp(c)
+        } else{    
+            if (this.alive) this.kill()
+        }
     }
 }
 
 let initPlayer = () =>  new PlayerCharacter( rStart() )
 
 let initNPC = () => {
-    return new NonPlayerCharacter( rStart() )
+    return new NonPlayerCharacter( rStart(), numNPC + 1 )
 }
 
 (function(){
