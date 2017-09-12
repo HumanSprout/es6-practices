@@ -41,7 +41,9 @@ let { loft, right : val } = node; // error thrown as loft is not defined
 
 let x = { A: [ 't', 'e', 's', 't' ] };
 
-let { A : [ , , y ] } = x; // y=s
+let { A : [ , , y ] } = x;
+
+console.log(y) // s
 
 // Exercise 5. Suppose the following configuration object of a financial chart is given (see: config)
 
