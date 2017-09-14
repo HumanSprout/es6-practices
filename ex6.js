@@ -13,24 +13,28 @@ let f = () => [..."12345"];
 let A = f().map( f );
 
 console.table( A );
+
+// it transformed each element of the returned array of f into an array of the same values
+// for each element of the functor being mapped (in this case the array returned from f), it invokes the function
  
 // Exercise 3. Create an 10×10 matrix of null values.
+
+let nulls = () => new Array(10).fill( null )
+
+let matrix = buildNulls().map( buildNulls )
 
 // Exercise 4. Rewrite the sumArgs function of this tutorial in ES2015, using a rest parameter and arrow functions.
 
 
-function sumArgs() {
+/*function sumArgs() {
     var result = 0;
     for( var i = 0; i < arguments.length; ++i ) result += arguments[i];
     return result;
-}
+}*/
  
-function sumArgs() {
-    var result = 0;
-    for( var i = 0; i < arguments.length; ++i ) result += arguments[i];
-    return result;
-}
- 
+let sumArgs = (...args) => args.length
+
+
 // Exercise 5. Complete the following ES2015 function that accepts two String arguments, and returns the length of the longest common substring in the two strings. The algorithmic complexity of the solution does not matter.
 
 
@@ -51,19 +55,3 @@ maxCommon( '11111', '11f111g');
 
 maxCommon( 'abc', '111cab' );
 // 2
- 
-let maxCommon = ([head1,...tail1], [head2,...tail2], len = 0) => {
-    if ( typeof head1 === 'undefined' || typeof head2 === 'undefined' ) /* Write code here */
-    if ( head1 === head2 ) /* Write code here */
-    let firstBranch = /* Write code here */
-    let secondBranch = /* Write code here */
-    return Math.max( ...[len, firstBranch, secondBranch ] );
-}
- 
-maxCommon( '123', '1' );
-// 1
- 
-maxCommon( '11111', '11f111g');
-// 3
- 
-maxCommon( 'abc', '111cab' );
