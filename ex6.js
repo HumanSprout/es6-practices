@@ -32,26 +32,29 @@ let matrix = buildNulls().map( buildNulls )
     return result;
 }*/
  
-let sumArgs = (...args) => args.length
-
+let sumArgs = (...args) => {
+    return args.reduce( (total, arg) => {
+        return total + arg
+    })
+}
 
 // Exercise 5. Complete the following ES2015 function that accepts two String arguments, and returns the length of the longest common substring in the two strings. The algorithmic complexity of the solution does not matter.
 
 
 
-let maxCommon = ([head1,...tail1], [head2,...tail2], len = 0) => {
-    if ( typeof head1 === 'undefined' || typeof head2 === 'undefined' ) /* Write code here */
-    if ( head1 === head2 ) /* Write code here */
-    let firstBranch = /* Write code here */
-    let secondBranch = /* Write code here */
-    return Math.max( ...[len, firstBranch, secondBranch ] );
-}
+// let maxCommon = ([head1,...tail1], [head2,...tail2], len = 0) => {
+//     if ( typeof head1 === 'undefined' || typeof head2 === 'undefined' ) /* Write code here */
+//     if ( head1 === head2 ) /* Write code here */
+//     let firstBranch =  Write code here 
+//     let secondBranch = /* Write code here */
+//     return Math.max( ...[len, firstBranch, secondBranch ] );
+// }
 
-maxCommon( '123', '1' );
-// 1
+// maxCommon( '123', '1' );
+// // 1
 
-maxCommon( '11111', '11f111g');
-// 3
+// maxCommon( '11111', '11f111g');
+// // 3
 
-maxCommon( 'abc', '111cab' );
-// 2
+// maxCommon( 'abc', '111cab' );
+// // 2
