@@ -12,7 +12,7 @@ let f = () => [..."12345"];
 
 let A = f().map( f );
 
-console.table( A );
+console.log( A );
 
 // it transformed each element of the returned array of f into an array of the same values
 // for each element of the functor being mapped (in this case the array returned from f), it invokes the function
@@ -21,7 +21,7 @@ console.table( A );
 
 let nulls = () => new Array(10).fill( null )
 
-let matrix = buildNulls().map( buildNulls )
+let matrix = nulls().map( nulls )
 
 // Exercise 4. Rewrite the sumArgs function of this tutorial in ES2015, using a rest parameter and arrow functions.
 
@@ -41,20 +41,21 @@ let sumArgs = (...args) => {
 // Exercise 5. Complete the following ES2015 function that accepts two String arguments, and returns the length of the longest common substring in the two strings. The algorithmic complexity of the solution does not matter.
 
 
+//official answer
 
-// let maxCommon = ([head1,...tail1], [head2,...tail2], len = 0) => {
-//     if ( typeof head1 === 'undefined' || typeof head2 === 'undefined' ) /* Write code here */
-//     if ( head1 === head2 ) /* Write code here */
-//     let firstBranch =  Write code here 
-//     let secondBranch = /* Write code here */
-//     return Math.max( ...[len, firstBranch, secondBranch ] );
-// }
+let maxCommon = ([head1,...tail1], [head2,...tail2], len = 0) => {
+    if ( typeof head1 === 'undefined' || typeof head2 === 'undefined' ) return len;
+    if ( head1 === head2 ) return maxCommon( tail1, tail2, len+1)
+    let firstBranch =  maxCommon( tail1, [head2, ...tail2], 0)
+    let secondBranch = maxCommon( [head1, ...tail1], tail2, 0);
+    return Math.max( ...[len, firstBranch, secondBranch ] );
+}
 
-// maxCommon( '123', '1' );
-// // 1
+console.log( maxCommon( '123', '1' ) )
+// 1
 
-// maxCommon( '11111', '11f111g');
-// // 3
+console.log( maxCommon( '11111', '11f111g') )
+// 3
 
-// maxCommon( 'abc', '111cab' );
-// // 2
+console.log( maxCommon( 'abc', '111cab' ) )
+// 2
